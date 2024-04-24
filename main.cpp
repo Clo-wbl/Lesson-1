@@ -41,46 +41,53 @@ int main(int argc, char **argv)
 
     // Find the feature points
 
+    vector<KeyPoint> keypoints1;
+    vector<KeyPoint> keypoints2;
+    Mat descriptors1;
+    Mat descriptors2;
+    Mat imFeatPt1;
+    Mat imFeatPt2;
+    Mat imFeatConcat;
+
     // SIFT
     Ptr<SIFT> sift = SIFT::create();
-    vector<KeyPoint> keypoints;
-    Mat descriptors;
-    sift->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+    sift->detectAndCompute(im1, noArray(), keypoints1, descriptors1);
+    sift->detectAndCompute(im2, noArray(), keypoints2, descriptors2);
 
-    Mat imFeatPt;
-    drawKeypoints(imConcat, keypoints, imFeatPt);
-    imshow("Image avec keypoints SIFT", imFeatPt);
+    drawKeypoints(im1, keypoints1, imFeatPt1);
+    drawKeypoints(im2, keypoints2, imFeatPt2);
+
+    hconcat(imFeatPt1, imFeatPt2, imFeatConcat);
+    imshow("Image with keypoints - SIFT", imFeatConcat);
     waitKey(0);
     // Comments : more suitable to take perspective into consideration :
     // but here we care more about local points
 
     // AKAZE
     Ptr<AKAZE> akaze = AKAZE::create();
-    akaze->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+    akaze->detectAndCompute(im1, noArray(), keypoints1, descriptors1);
+    akaze->detectAndCompute(im2, noArray(), keypoints2, descriptors2);
 
-    drawKeypoints(imConcat, keypoints, imFeatPt);
-    imshow("Image avec keypoints - AKAZE", imFeatPt);
+    drawKeypoints(im1, keypoints1, imFeatPt1);
+    drawKeypoints(im2, keypoints2, imFeatPt2);
+
+    hconcat(imFeatPt1, imFeatPt2, imFeatConcat);
+    imshow("Image with keypoints - AKAZE", imFeatConcat);
     waitKey(0);
     // Comments : more suitable for change of scaling, but not really the case here
 
     // ORB
     Ptr<ORB> orb = ORB::create();
-    orb->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+    orb->detectAndCompute(im1, noArray(), keypoints1, descriptors1);
+    orb->detectAndCompute(im2, noArray(), keypoints2, descriptors2);
 
-    drawKeypoints(imConcat, keypoints, imFeatPt);
-    imshow("Image avec keypoints - ORB", imFeatPt);
+    drawKeypoints(im1, keypoints1, imFeatPt1);
+    drawKeypoints(im2, keypoints2, imFeatPt2);
+
+    hconcat(imFeatPt1, imFeatPt2, imFeatConcat);
+    imshow("Image with keypoints - ORB", imFeatConcat);
     waitKey(0);
     // Comments : most suitable --> focuses more on the vase, and higher speed
-
-    
-
-
-
-
-
-
-
-
 
     // // Gray scale
     // Mat grayImage;
