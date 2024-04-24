@@ -10,6 +10,8 @@
 using namespace std;
 using namespace cv;
 
+int argNum = 30;
+
 int main(int argc, char **argv)
 {
     // Read file
@@ -50,7 +52,7 @@ int main(int argc, char **argv)
     Mat imFeatConcat;
 
     // SIFT
-    Ptr<SIFT> sift = SIFT::create();
+    Ptr<SIFT> sift = SIFT::create(argNum);
     sift->detectAndCompute(im1, noArray(), keypoints1, descriptors1);
     sift->detectAndCompute(im2, noArray(), keypoints2, descriptors2);
 
@@ -65,6 +67,7 @@ int main(int argc, char **argv)
 
     // AKAZE
     Ptr<AKAZE> akaze = AKAZE::create();
+    akaze->setMaxPoints(argNum);
     akaze->detectAndCompute(im1, noArray(), keypoints1, descriptors1);
     akaze->detectAndCompute(im2, noArray(), keypoints2, descriptors2);
 
@@ -77,7 +80,7 @@ int main(int argc, char **argv)
     // Comments : more suitable for change of scaling, but not really the case here
 
     // ORB
-    Ptr<ORB> orb = ORB::create();
+    Ptr<ORB> orb = ORB::create(argNum);
     orb->detectAndCompute(im1, noArray(), keypoints1, descriptors1);
     orb->detectAndCompute(im2, noArray(), keypoints2, descriptors2);
 
