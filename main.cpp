@@ -40,16 +40,47 @@ int main(int argc, char **argv)
     waitKey(0); // wait for a key in the window
 
     // Find the feature points
-    Ptr<AKAZE> akaze = AKAZE::create();
+
+    // SIFT
+    Ptr<SIFT> sift = SIFT::create();
     vector<KeyPoint> keypoints;
     Mat descriptors;
-    akaze->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+    sift->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
 
     Mat imFeatPt;
     drawKeypoints(imConcat, keypoints, imFeatPt);
-
-    imshow("Image avec keypoints", imFeatPt);
+    imshow("Image avec keypoints SIFT", imFeatPt);
     waitKey(0);
+    // Comments : more suitable to take perspective into consideration :
+    // but here we care more about local points
+
+    // AKAZE
+    Ptr<AKAZE> akaze = AKAZE::create();
+    akaze->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+
+    drawKeypoints(imConcat, keypoints, imFeatPt);
+    imshow("Image avec keypoints - AKAZE", imFeatPt);
+    waitKey(0);
+    // Comments : more suitable for change of scaling, but not really the case here
+
+    // ORB
+    Ptr<ORB> orb = ORB::create();
+    orb->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+
+    drawKeypoints(imConcat, keypoints, imFeatPt);
+    imshow("Image avec keypoints - ORB", imFeatPt);
+    waitKey(0);
+    // Comments : most suitable --> focuses more on the vase, and higher speed
+
+    
+
+
+
+
+
+
+
+
 
     // // Gray scale
     // Mat grayImage;
