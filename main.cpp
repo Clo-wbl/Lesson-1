@@ -4,6 +4,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/features2d.hpp>
 #include <string>
 
 using namespace std;
@@ -39,7 +40,16 @@ int main(int argc, char **argv)
     waitKey(0); // wait for a key in the window
 
     // Find the feature points
-    
+    Ptr<AKAZE> akaze = AKAZE::create();
+    vector<KeyPoint> keypoints;
+    Mat descriptors;
+    akaze->detectAndCompute(imConcat, noArray(), keypoints, descriptors);
+
+    Mat imFeatPt;
+    drawKeypoints(imConcat, keypoints, imFeatPt);
+
+    imshow("Image avec keypoints", imFeatPt);
+    waitKey(0);
 
     // // Gray scale
     // Mat grayImage;
@@ -63,7 +73,7 @@ int main(int argc, char **argv)
     // for(int i = 0; i < 5; i++){
     //     circle(circleImage, Point(listPointsX[i],listPointsY[i]), radius, Scalar(listColorsB[i], listColorsG[i], listColorsR[i]), thickness);
     // }
-    // line(image, Point(55, 250), Point(345, 250), Scalar(255, 0, 255), thickness, LINE_4); 
+    // line(image, Point(55, 250), Point(345, 250), Scalar(255, 0, 255), thickness, LINE_4);
     // imshow("Circle and Line", circleImage);
 
     // waitKey(0); // wait for a key in the window
