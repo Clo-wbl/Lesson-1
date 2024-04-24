@@ -1,0 +1,9 @@
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/Experimental.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/Nightly.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/Continuous.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/NightlyMemoryCheck.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/lesson1.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/PACKAGE.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/CMakeFiles/ZERO_CHECK.dir

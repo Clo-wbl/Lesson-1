@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\clobr\OneDrive\Documents\Etudes\INSA\Echanges\KU\Computer Vision\Lesson 1\build\CMakeFiles\d25c1103144faf1122a2e3fd2917ade1\NightlyMemoryCheck.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\clobr\OneDrive\Documents\Etudes\INSA\Echanges\KU\Computer Vision\Lesson 1\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\clobr\OneDrive\Documents\Etudes\INSA\Echanges\KU\Computer Vision\Lesson 1\build\CMakeFiles\NightlyMemoryCheck" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{B825321D-90B3-36B6-A6FA-27B1C20EB49B}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

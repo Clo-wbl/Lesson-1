@@ -1,0 +1,10 @@
+^C:\USERS\CLOBR\ONEDRIVE\DOCUMENTS\ETUDES\INSA\ECHANGES\KU\COMPUTER VISION\LESSON 1\BUILD\CMAKEFILES\D25C1103144FAF1122A2E3FD2917ADE1\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" "-SC:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1" "-BC:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/clobr/OneDrive/Documents/Etudes/INSA/Echanges/KU/Computer Vision/Lesson 1/build/lesson1.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
