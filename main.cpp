@@ -25,9 +25,8 @@ int main(int argc, char **argv)
 
     // Read video frame by frame
     Mat frame;
-    while (true)
-    {
-        vid >> frame; // Put one frame at a time
+    do{
+        vid.read(frame); // Put one frame at a time
         if (frame.empty())
         {
             std::cout << "Video ended" << std::endl;
@@ -39,12 +38,19 @@ int main(int argc, char **argv)
         {
             break;
         }
-    }
 
-    // Go back to the beginning of the video
-    // vid.set(CAP_PROP_FORMAT, 0);
+    } while (!frame.empty());
+
+    vid.release();
 
     // Read it a second time but displaying feature points too
+
+    VideoCapture vid2("..\\..\\img\\flog.m1V");
+    if (!vid2.isOpened())
+    {
+        std::cerr << "Error while opening the video" << std::endl;
+        return -1;
+    }
 
     // Feature points
     vector<KeyPoint> keypoints;
@@ -52,7 +58,7 @@ int main(int argc, char **argv)
 
     while (true)
     {
-        vid >> frame; // Put one frame at a time
+        vid2 >> frame; // Put one frame at a time
         if (frame.empty())
         {
             std::cout << "Video ended" << std::endl;
@@ -73,7 +79,7 @@ int main(int argc, char **argv)
     }
 
     // Destroy
-    vid.release();
+    vid2.release();
     frame.release();
     imFeatPt.release();
 
