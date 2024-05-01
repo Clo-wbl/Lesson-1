@@ -56,8 +56,7 @@ int main(int argc, char **argv)
     vector<KeyPoint> keypoints;
     Mat imFeatPt;
 
-    while (true)
-    {
+    do{
         vid2 >> frame; // Put one frame at a time
         if (frame.empty())
         {
@@ -65,7 +64,7 @@ int main(int argc, char **argv)
             break;
         }
 
-        // ORB
+        // Fast
         Ptr<FastFeatureDetector> fast = FastFeatureDetector ::create();
         fast->detect(frame, keypoints);
 
@@ -76,7 +75,7 @@ int main(int argc, char **argv)
         {
             break;
         }
-    }
+    } while (!frame.empty());
 
     // Destroy
     vid2.release();
