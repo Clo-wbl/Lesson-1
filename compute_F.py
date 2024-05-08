@@ -159,11 +159,11 @@ for i in range(len(points1)):
     c2 = F[0][2]*points1[i][0] + F[1][2]*points1[i][1] + F[2][2]
     if display : print("Img 2 : Point ", i, " : ", a2, "x + ", b2, "y + ", c2, " = 0\n\n")
     
-    x1 = np.linspace(0, width1, 4000)
+    x1 = np.linspace(0, width1-1, width1)
     y1 = (-a1*x1 - c1) / b1
     ax1.plot(x1, y1, color=colors[i])
 
-    x2 = np.linspace(0, width2, 4000)
+    x2 = np.linspace(0, width2-1, width2)
     y2 = (-a2*x2 - c2) / b2
     ax2.plot(x2, y2, color=colors[i])
 
