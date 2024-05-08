@@ -1,0 +1,8 @@
+img1[ 2081 ; 1133 ]/img2[ 1959 ; 1213 ]/ff0000/red
+img1[ 1264 ; 542 ]/img2[ 1466 ; 534 ]/04ff00/green
+img1[ 846 ; 812 ]/img2[ 914 ; 800 ]/1f00ff/blue
+img1[ 607 ; 627 ]/img2[ 738 ; 608 ]/cf00ff/purple
+img1[ 1823 ; 315 ]/img2[ 1724 ; 299 ]/feff00/yellow
+img1[ 924 ; 1092 ]/img2[ 953 ; 1080 ]/00daff/cyan
+img1[ 41 ; 662 ]/img2[ 223 ; 632 ]/ff7900/orange
+img1[ 1913 ; 758 ]/img2[ 1777 ; 791 ]/ffffff/white
