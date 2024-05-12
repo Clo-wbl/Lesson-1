@@ -1,8 +1,8 @@
-img1[ 578 ; 966 ]/img2[ 701 ; 827 ]/ff0000/red
-img1[ 1240 ; 947 ]/img2[ 1351 ; 811 ]/04ff00/green
-img1[ 1532 ; 1215 ]/img2[ 1633 ; 1081 ]/1f00ff/blue
-img1[ 1776 ; 1008 ]/img2[ 1895 ; 857 ]/cf00ff/purple
-img1[ 1140 ; 1065 ]/img2[ 1242 ; 926 ]/feff00/yellow
-img1[ 790 ; 1155 ]/img2[ 902 ; 1020 ]/00daff/cyan
-img1[ 911 ; 1222 ]/img2[ 1015 ; 1084 ]/ff7900/orange
-img1[ 2423 ; 804 ]/img2[ 2598 ; 616 ]/ffffff/white
+img1[ 289 ; 483 ]/img2[ 350 ; 413 ]/ff0000/red
+img1[ 620 ; 473 ]/img2[ 675 ; 405 ]/04ff00/green
+img1[ 766 ; 607 ]/img2[ 816 ; 540 ]/1f00ff/blue
+img1[ 888 ; 504 ]/img2[ 947 ; 428 ]/cf00ff/purple
+img1[ 570 ; 532 ]/img2[ 621 ; 463 ]/feff00/yellow
+img1[ 395 ; 577 ]/img2[ 451 ; 510 ]/00daff/cyan
+img1[ 455 ; 611 ]/img2[ 507 ; 542 ]/ff7900/orange
+img1[ 1211 ; 402 ]/img2[ 1299 ; 308 ]/ffffff/white
