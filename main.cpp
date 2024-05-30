@@ -5,88 +5,57 @@
 using namespace std;
 using namespace cv;
 
-int main() {
-    srand (time(NULL));
+int main()
+{
     // Load Images
-    Mat img1 = imread("..\\..\\img\\not_same_plane\\img1.JPG", IMREAD_COLOR);
-    Mat img2 = imread("..\\..\\img\\not_same_plane\\img2.JPG", IMREAD_COLOR);
+    Mat img1 = imread("..\\..\\img\\photometric\\cat.2.png", IMREAD_COLOR);
+    Mat img2 = imread("..\\..\\img\\photometric\\cat.4.png", IMREAD_COLOR);
+    Mat img3 = imread("..\\..\\img\\photometric\\cat.9.png", IMREAD_COLOR);
+    Mat mask = imread("..\\..\\img\\photometric\\cat.mask.png", IMREAD_COLOR);
 
-    if (img1.empty() || img2.empty()) {
-        cerr << "Error : impossible to load image." << endl;
-        return 1;
+    if (img1.empty() || img2.empty() || img3.empty() || mask.empty())
+    {
+        cout << "Image loading has failed" << endl;
+        system("pause");
+        return -1;
     }
 
-    // Ask number of points
-    int numPoints;
-    cout << "How many points do you want to extract ?\nAnswer : ";
-    cin >> numPoints;
+    // --------- Get intensities ----------- //
+    // Convert to gray scale
+    Mat grayImg1, grayImg2, grayImg3, grayMask;
+    cvtColor(img1, grayImg1, COLOR_BGR2GRAY);
+    cvtColor(img2, grayImg2, COLOR_BGR2GRAY);
+    cvtColor(img3, grayImg3, COLOR_BGR2GRAY);
 
-    int choose_algo;
-    cout << "What algorithm do you want to use ?\n[1] ORB\n[2] AKAZE\nAnswer : ";
-    cin >> choose_algo;
+    // Convert to float
+    Mat fGrayImg1, fGrayImg2, fGrayImg3, fMask;
+    grayImg1.convertTo(fGrayImg1, CV_32F);
+    grayImg2.convertTo(fGrayImg2, CV_32F);
+    grayImg3.convertTo(fGrayImg3, CV_32F);
+    mask.convertTo(fMask, CV_32F, 1.0 / 255.0); // and normalize the mask between 0 and 1
 
-    // Extract features points
-    Ptr<ORB> orb;
-    Ptr<AKAZE> akaze;
-    vector<KeyPoint> keypoints1, keypoints2;
-    Mat descriptors1, descriptors2;
-    switch(choose_algo){
-        case 1 :
-            orb = ORB::create(numPoints);
-            orb->detectAndCompute(img1, noArray(), keypoints1, descriptors1);
-            orb->detectAndCompute(img2, noArray(), keypoints2, descriptors2);
-            break;
-        case 2 :
-            akaze = AKAZE::create();
-            akaze->setMaxPoints(numPoints);
-            akaze->detectAndCompute(img1, noArray(), keypoints1, descriptors1);
-            akaze->detectAndCompute(img2, noArray(), keypoints2, descriptors2);
-            break;
-        default :
-            cerr << "Error : algorithm doesn't exist." << endl;
-            return 1;
-    }
+    // Applying the mask
+    filter2D(fGrayImg1, fGrayImg1, fGrayImg1.depth(), fMask);
+    filter2D(fGrayImg2, fGrayImg2, fGrayImg2.depth(), fMask);
+    filter2D(fGrayImg3, fGrayImg3, fGrayImg3.depth(), fMask);
 
-    // Create a BFMatcher object with Hamming's distance
-    BFMatcher matcher(NORM_HAMMING);
-    vector<DMatch> matches;
-    matcher.match(descriptors1, descriptors2, matches);
-    sort(matches.begin(), matches.end());
+    // Print some intensity values for verification
+    cout << "Intensity value at (100, 100) in Image 1: " << fGrayImg1.at<float>(100, 100) << endl;
+    cout << "Intensity value at (100, 100) in Image 2: " << fGrayImg2.at<float>(100, 100) << endl;
+    cout << "Intensity value at (100, 100) in Image 3: " << fGrayImg3.at<float>(100, 100) << endl;
 
-    // Filtering matches by distance
-    float maxDistance = 100.0;
-    cout << "Choose the threshold you want for your points (around 50 and 100 for a image 1200x2000)\nAnswer : ";
-    cin >> maxDistance;
-    vector<DMatch> filteredMatches;
-    for (const DMatch& match : matches) {
-        if (match.distance < maxDistance) {
-            filteredMatches.push_back(match);
-        }
-    }
-    cout << "Number of points remaining : " << filteredMatches.size() << endl;
-
-    // Write features points in the file
-    ofstream outFile("..\\..\\img\\not_same_plane\\extra_points\\extra_points.txt");
-    for (const DMatch& match : filteredMatches) {
-        Point2f pt1 = keypoints1[match.queryIdx].pt;
-        Point2f pt2 = keypoints2[match.trainIdx].pt;
-        Scalar color = Scalar(rand() % 256, rand() % 256, rand() % 256); // Random Color
-        stringstream colorHex;
-        colorHex << hex << setfill('0') << setw(2) << static_cast<int>(color[2])
-                 << setw(2) << static_cast<int>(color[1]) << setw(2) << static_cast<int>(color[0]);
-        outFile << "img1[ " << (int)(pt1.x + 0.5) << " ; " << (int)(pt1.y + 0.5) << " ]/img2[ " << (int)(pt2.x + 0.5) << " ; " << (int)(pt2.y + 0.5) << " ]/";
-        outFile << colorHex.str() << "/";
-        outFile << endl;
-
-        // Draw circle of associated features points
-        circle(img1, pt1, 30, color, 5);
-        circle(img2, pt2, 30, color, 5);
-    }
-    outFile.close();
-
-    // Save images with highlighted points
-    imwrite("..\\..\\img\\not_same_plane\\extra_points\\img1_extra_points.jpg", img1);
-    imwrite("..\\..\\img\\not_same_plane\\extra_points\\img2_extra_points.jpg", img2);
+    // Destroy
+    img1.release();
+    grayImg1.release();
+    fGrayImg1.release();
+    img2.release();
+    grayImg2.release();
+    fGrayImg2.release();
+    img3.release();
+    grayImg3.release();
+    fGrayImg3.release();
+    mask.release();
+    fMask.release();
 
     return 0;
 }
