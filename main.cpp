@@ -1,6 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
-#include <fstream>
+#include <vector>
 
 using namespace std;
 using namespace cv;
@@ -8,54 +8,55 @@ using namespace cv;
 int main()
 {
     // Load Images
-    Mat img1 = imread("..\\..\\img\\photometric\\cat.2.png", IMREAD_COLOR);
-    Mat img2 = imread("..\\..\\img\\photometric\\cat.4.png", IMREAD_COLOR);
-    Mat img3 = imread("..\\..\\img\\photometric\\cat.9.png", IMREAD_COLOR);
-    Mat mask = imread("..\\..\\img\\photometric\\cat.mask.png", IMREAD_COLOR);
+    vector<Mat> imgs;
+    imgs.push_back(imread("..\\..\\img\\photometric\\cat.2.png", IMREAD_COLOR));
+    imgs.push_back(imread("..\\..\\img\\photometric\\cat.4.png", IMREAD_COLOR));
+    imgs.push_back(imread("..\\..\\img\\photometric\\cat.9.png", IMREAD_COLOR));
+    Mat mask = imread("..\\..\\img\\photometric\\cat.mask.png", IMREAD_GRAYSCALE);
 
-    if (img1.empty() || img2.empty() || img3.empty() || mask.empty())
-    {
-        cout << "Image loading has failed" << endl;
-        system("pause");
+    // Check if images are loaded
+    for (const auto& img : imgs) {
+        if (img.empty()) {
+            cout << "Image loading has failed" << endl;
+            return -1;
+        }
+    }
+
+    if (mask.empty()) {
+        cout << "Mask loading has failed" << endl;
         return -1;
     }
 
     // --------- Get intensities ----------- //
     // Convert to gray scale
-    Mat grayImg1, grayImg2, grayImg3, grayMask;
-    cvtColor(img1, grayImg1, COLOR_BGR2GRAY);
-    cvtColor(img2, grayImg2, COLOR_BGR2GRAY);
-    cvtColor(img3, grayImg3, COLOR_BGR2GRAY);
+    vector<Mat> grayImgs;
+    for (const auto& img : imgs) {
+        Mat grayImg;
+        cvtColor(img, grayImg, COLOR_BGR2GRAY);
+        grayImgs.push_back(grayImg);
+    }
 
-    // Convert to float
-    Mat fGrayImg1, fGrayImg2, fGrayImg3, fMask;
-    grayImg1.convertTo(fGrayImg1, CV_32F);
-    grayImg2.convertTo(fGrayImg2, CV_32F);
-    grayImg3.convertTo(fGrayImg3, CV_32F);
-    mask.convertTo(fMask, CV_32F, 1.0 / 255.0); // and normalize the mask between 0 and 1
+    cout << "Img value at (250, 100): after gray scale before mask" << (int)grayImgs[0].at<uint8_t>(250, 100) << endl;
 
-    // Applying the mask
-    filter2D(fGrayImg1, fGrayImg1, fGrayImg1.depth(), fMask);
-    filter2D(fGrayImg2, fGrayImg2, fGrayImg2.depth(), fMask);
-    filter2D(fGrayImg3, fGrayImg3, fGrayImg3.depth(), fMask);
+    // Apply mask to each grayscale image
+    for (size_t i = 0; i < grayImgs.size(); ++i) {
+        Mat masked;
+        bitwise_and(grayImgs[i], grayImgs[i], masked, mask);
+        grayImgs[i] = masked;
 
-    // Print some intensity values for verification
-    cout << "Intensity value at (100, 100) in Image 1: " << fGrayImg1.at<float>(100, 100) << endl;
-    cout << "Intensity value at (100, 100) in Image 2: " << fGrayImg2.at<float>(100, 100) << endl;
-    cout << "Intensity value at (100, 100) in Image 3: " << fGrayImg3.at<float>(100, 100) << endl;
+        // Print intensity value at (250, 100) before and after applying the mask
+        cout << "Intensity value at (250, 100) in gray Image " << i + 1 << " before masking: " << (int)grayImgs[i].at<uint8_t>(250, 100) << endl;
+        cout << "Intensity value at (250, 100) in masked gray Image " << i + 1 << ": " << (int)masked.at<uint8_t>(250, 100) << endl;
+    }
+
+    // Optional: Convert vector to array if needed
+    vector<Mat> imgArray(grayImgs.begin(), grayImgs.end());
 
     // Destroy
-    img1.release();
-    grayImg1.release();
-    fGrayImg1.release();
-    img2.release();
-    grayImg2.release();
-    fGrayImg2.release();
-    img3.release();
-    grayImg3.release();
-    fGrayImg3.release();
+    for (auto& img : grayImgs) {
+        img.release();
+    }
     mask.release();
-    fMask.release();
 
     return 0;
 }
