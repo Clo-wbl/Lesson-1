@@ -1,4 +1,3 @@
-/** LESSON 4 */
 #include <iostream>
 
 #include <opencv2/opencv.hpp>
@@ -16,7 +15,7 @@ int main(int argc, char **argv)
 {
 
     // Open the video
-    VideoCapture vid("..\\..\\img\\flog.m1V");
+    VideoCapture vid("..\\..\\video\\flog.mpeg");
     if (!vid.isOpened())
     {
         std::cerr << "Error while opening the video" << std::endl;
@@ -34,7 +33,7 @@ int main(int argc, char **argv)
         }
 
         imshow("Video", frame); // Print frame
-        if (waitKey(25) == 27)  // Each frame is displayed 25ms and escape if ESC key pressed
+        if (waitKey(15) == 27)  // Each frame is displayed 25ms and escape if ESC key pressed
         {
             break;
         }
@@ -45,12 +44,17 @@ int main(int argc, char **argv)
 
     // Read it a second time but displaying feature points too
 
-    VideoCapture vid2("..\\..\\img\\flog.m1V");
+    VideoCapture vid2("..\\..\\video\\flog.mpeg");
     if (!vid2.isOpened())
     {
         std::cerr << "Error while opening the video" << std::endl;
         return -1;
     }
+
+    // Save the video
+    int frame_width = vid2.get(cv::CAP_PROP_FRAME_WIDTH);
+    int frame_height = vid2.get(cv::CAP_PROP_FRAME_HEIGHT);
+    VideoWriter video("..\\..\\output\\flog.avi", cv::VideoWriter::fourcc('M','J','P','G'), 25, Size(frame_width,frame_height));
 
     // Feature points
     vector<KeyPoint> keypoints;
@@ -70,15 +74,20 @@ int main(int argc, char **argv)
 
         drawKeypoints(frame, keypoints, imFeatPt);
 
+        video.write(imFeatPt);
+
         imshow("Video with keypoints", imFeatPt);
-        if (waitKey(25) == 27) // Each frame is displayed 25ms and escape if ESC key pressed
+        if (waitKey(10) == 27) // Each frame is displayed 25ms and escape if ESC key pressed
         {
             break;
         }
     } while (!frame.empty());
 
+
+
     // Destroy
     vid2.release();
+    video.release();
     frame.release();
     imFeatPt.release();
 

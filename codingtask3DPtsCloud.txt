@@ -1,0 +1,121 @@
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <sstream>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/features2d.hpp>
+#include <string>
+
+using namespace std;
+using namespace cv;
+
+int main()
+{
+    std::ifstream infile("..\\..\\points\\curve.F000000.xyz");
+    if (!infile.is_open())
+    {
+        cerr << "Error : Impossible to open the file" << endl;
+        return 1;
+    }
+
+    vector<Point3f> points;
+    string line;
+
+    bool first = true;
+
+    Point3f min_xyz;
+    Point3f max_xyz;
+
+    Point3f centroid = {0, 0, 0};
+
+    while (std::getline(infile, line))
+    {
+        istringstream iss(line);
+        Point3f p;
+        if (!(iss >> p.x >> p.y >> p.z))
+        {
+            cerr << "Error in the reading of data" << endl;
+            return 1;
+        }
+        // Compute the bound box
+        if (first)
+        {
+            min_xyz = p;
+            max_xyz = p;
+            first = false;
+        }
+        else
+        {
+            if (min_xyz.x > p.x)
+                min_xyz.x = p.x;
+            if (min_xyz.y > p.y)
+                min_xyz.y = p.y;
+            if (min_xyz.z > p.z)
+                min_xyz.z = p.z;
+            if (max_xyz.x < p.x)
+                max_xyz.x = p.x;
+            if (max_xyz.y < p.y)
+                max_xyz.y = p.y;
+            if (max_xyz.z < p.z)
+                max_xyz.z = p.z;
+        }
+        // Compute the centroid
+        centroid.x += p.x;
+        centroid.y += p.y;
+        centroid.z += p.z;
+        points.push_back(p);
+    }
+
+    centroid.x /= points.size();
+    centroid.y /= points.size();
+    centroid.z /= points.size();
+
+    // Display results
+    cout << "Bounding box :" << std::endl;
+    cout << "Bottom left corner : " << min_xyz.x << " " << min_xyz.y << " " << min_xyz.z << endl;
+    cout << "Upper right corner : " << max_xyz.x << " " << max_xyz.y << " " << max_xyz.z << endl;
+    cout << "\nCentroid : " << centroid.x << " " << centroid.y << " " << centroid.z << endl;
+
+    float f = 0.5;
+    float cameraPlace = -3;
+
+    float K_pinhole[3][3] = {{f, 0, centroid.x},
+                           {0, f, centroid.y+ cameraPlace},
+                           {0, 0, 1}};
+
+    // Define the distortion coefficients as a 5x1 array
+    float dist[5] = {0, 0, 0, 0, 0};
+
+    // Define the rotation and translation vectors as 3x1 arrays
+    float rvec[3] = {0, 0, 0};
+    float tvec[3] = {0, 0, 0};
+
+    // Create Mat objects from the arrays
+    Mat Kmatrix(3, 3, CV_32F, K_pinhole);
+    Mat dist_coeffs(5, 1, CV_32F, dist);
+    Mat points_3d(points);
+    Mat rvecmatrix(3, 1, CV_32F, rvec);
+    Mat tvecmatrix(3, 1, CV_32F, tvec);
+
+    // Map the 3D point to 2D point
+    vector<Point2f> points_2d;
+    projectPoints(points_3d, rvecmatrix, tvecmatrix, Kmatrix, dist_coeffs, points_2d);
+
+    // Create a blank image of size 1000x1000
+    Mat image(700, 700, CV_8UC3, Scalar(255, 255, 255)); // White background
+
+
+    // Draw each point on the image
+    for (const auto& point : points_2d) {
+        Point p = Point(point);
+        circle(image, p, 5, Scalar(0, 0, 255)); // Red color
+    }
+
+    // Display the image
+    imshow("2D Points on Image", image);
+    waitKey(0);
+
+    return 0;
+}
