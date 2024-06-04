@@ -1,8 +1,8 @@
 """
 
 ©Copyright Code :
-Evahn LE GAL, ISIMA Clermont INP
 Chloé BRICE, INSA Lyon
+Evahn LE GAL, ISIMA Clermont INP
 
 Code co-written with Evahn LE GAL, with the agreement of the professor, the report and the images will nevertheless be different for each student
 Only the code was written and used as a team
@@ -12,118 +12,88 @@ Python 3.11.6
 """
 
 import math
-from PIL import Image
-from matplotlib import pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
-
-# Light sources
-S_list = []
-
-light_sources = [
-    "0.403259 0.480808 0.778592",
-    "0.0982272 0.163712 0.981606",
-    "-0.0654826 0.180077 0.98147",
-    "-0.127999 0.431998 0.892745",
-    "-0.328606 0.485085 0.810377",
-    "-0.110339 0.53593 0.837021",
-    "0.239071 0.41439 0.878138",
-    "0.0642302 0.417497 0.906406",
-    "0.12931 0.339438 0.931698",
-    "0.0323953 0.340151 0.939813",
-    "0.0985318 0.0492659 0.993914",
-    "-0.16119 0.354617 0.921013",
-]
-
-S_list.append([-0.0654826, 0.180077, 0.98147])
-S_list.append([-0.328606, 0.485085, 0.810377])
-S_list.append([0.0323953, 0.340151, 0.939813])
-
-print("S_list:", S_list)
+from PIL import Image
 
 
-# Load Images
-img_files = [
-    "./img/photometric/cat.2.png",
-    "./img/photometric/cat.4.png",
-    "./img/photometric/cat.9.png",
-]
 
-imgs = [Image.open(img_file).convert("RGB") for img_file in img_files]
+#-#-# // Question A-2 : Compute E \\ #-#-#
 
-# Load mask
-mask = Image.open("./img/photometric/cat.mask.png").convert("L")
+print("\n### ## # A-2 : Compute E # ## ###\n\n")
 
-# Check if images are loaded
-for img in imgs:
-    if img is None:
-        print("Image loading has failed")
-        exit()
+# Part 1 : Compute F in the same way as report1
 
-if mask is None:
-    print("Mask loading has failed")
+from A2_epipolar_lines import load_points, construct_F, creation_of_img, draw_report1_epipolar_line
+
+list_of_point_F = "resources/report1_F/list_of_points.txt"
+points1, points2, colors = load_points(list_of_point_F)
+F = construct_F(points1, points2)
+
+# Part 2 : Create images and draw first epipolar lines of report1 in cyan
+
+img1 = Image.open("resources/report1_F/img1.png")
+img2 = Image.open("resources/report1_F/img2.png")
+ax1, ax2 = creation_of_img(img1, img2)
+draw_report1_epipolar_line(F, points1, points2, img1, img2, ax1, ax2)
+
+
+# Part 3 : recover E and draw the associated epipolar lines
+
+from A2_exploitation_of_E import load_E, compute_new_F, draw_epipolar_line_new_F
+
+name_matrix = input("\n\nGive the name of the file with the matrix E : ")
+
+E = load_E("resources/report1_F/A2_matrix_E/" + name_matrix)
+print("\n E loaded = ", E)
+
+K = np.array([[1,0,0],
+              [0,1,0],
+              [0,0,1]])
+
+new_F = compute_new_F(E,K)
+print("\n New F = ", new_F)
+
+
+nb_elements = input("\nHow many items do you want to process? (choose the same number as for the calculation of E in C++, 5 by default for the 5 point algorithm) : ")
+nb_elements = int(nb_elements)
+if nb_elements < 5 :
+    print("Error, can't use less than 5 points")
     exit()
 
-# Convert to gray scale and apply mask
-gray_imgs = []
-for img in imgs:
-    gray_img = img.convert("L")
-    masked = Image.fromarray(np.bitwise_and(np.array(gray_img), np.array(mask)))
-    gray_imgs.append(masked)
+draw_epipolar_line_new_F(new_F, nb_elements, points1, points2, colors, img1, img2, ax1, ax2)
 
-# Print intensity values at a specific point for verification
-for i, gray_img in enumerate(gray_imgs):
-    print(
-        f"Intensity value at (250, 100) in gray Image {i + 1}: {gray_img.getpixel((250, 100))}"
-    )
-
-# Use the light sources coordinates
-S = np.array(S_list)
-S_t = S.T
-
-# Transform the gray images list into an array for the computation
-gray_imgs = np.array(gray_imgs)
-
-h, w = gray_imgs[0].shape[:2]
-
-# Matrix of all the normal coordinates at each pixel
-img_normal = np.zeros((h, w, 3))
-
-# Value of luminance at each pixel of the grey images
-I = np.zeros((len(S_list), 3))
-
-# For each pixel
-for x in range(w):
-    for y in range(h):
-
-        # And each of the 3 images
-        for i in range(len(gray_imgs)):
-            I[i] = gray_imgs[i][y][x]
-
-        # Use the formula to compute N
-        S_inv = np.linalg.inv(S_t)
-        N = np.dot(S_inv, I).T
-        N_norm = np.linalg.norm(N, axis=1)
-
-        rho = N_norm * math.pi
-
-        # Define a luminosity to display normals
-        N_gray = N[0] * 0.30 + N[1] * 0.35 + N[2] * 0.35
-        N_gray_norm = np.linalg.norm(N_gray)
-        if N_gray_norm == 0:
-            continue
-
-        # Store the normals' values of the image
-        img_normal[y][x] = N_gray / N_gray_norm
-
-# Convert to rgb for colored representation
-img_normal_rgb = ((img_normal * 0.5 + 0.5) * 255).astype(np.uint8)
-
-# Display
-plt.figure(figsize=(30,8))
-plt.subplot(1, 2, 1)
-plt.imshow(imgs[0])
-plt.title("Example image with a specific light source")
-plt.subplot(1, 2, 2)
-plt.imshow(img_normal_rgb)
-plt.title("Surface Normals of the object")
+plt.savefig("resources/output/epipolar_lines_from_E.png")
 plt.show()
+
+
+
+
+#-#-# // Question B-2 : Photometric Stereo Method \\ #-#-#
+
+print("\n\n\n### ## # B-2 : Photometric Stereo Method # ## ###\n\n")
+from B2_photometric import load_lights, load_imgs_mask, compute_photometric, show_and_display
+
+# Part 1 : Extract lights and Load Images/Mask
+
+list_numbers = []
+print("Type the camera numbers (between 0 and 11, need 3 cameras)\n")
+for i in range(3):
+    ask = int(input("Camera number you want to use : "))
+    list_numbers.append(ask)
+
+S_list = load_lights("resources/photometric/lights.txt", list_numbers)
+print("\nS_list : \n", S_list)
+
+imgs, mask = load_imgs_mask(list_numbers)
+
+
+# Part 2 : Compute the photomectric method
+
+img_normal_rgb = compute_photometric(S_list, imgs, mask)
+
+
+# Part 3 : Display and save
+show_and_display(list_numbers, imgs, img_normal_rgb, "resources/output/surface_normals.png")
+
+
